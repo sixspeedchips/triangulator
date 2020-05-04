@@ -11,7 +11,7 @@ public class Position {
     this.y = y;
   }
 
-  static Position of(double x, double y){
+  public static Position of(double x, double y){
     return new Position(x,y);
   }
 
