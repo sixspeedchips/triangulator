@@ -11,7 +11,7 @@ public class Position {
     this.y = y;
   }
 
-  public static Position of(double x, double y){
+  public static Position at(double x, double y){
     return new Position(x,y);
   }
 
@@ -22,4 +22,12 @@ public class Position {
   public double getY() {
     return y;
   }
+
+  public static double slope(Position p1, Position p2){
+    double theta = 0f;
+    double slope = (p2.y - p1.y) / (p2.x - p1.x);
+    System.out.println(slope);
+    return theta;
+  }
+
 }

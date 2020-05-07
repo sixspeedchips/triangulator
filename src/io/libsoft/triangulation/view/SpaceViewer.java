@@ -16,17 +16,23 @@ public class SpaceViewer extends Canvas {
     space = new Space();
     gc = getGraphicsContext2D();
     setWidth(1000);
-    setHeight(500);
+    setHeight(1000);
+    setOnMouseDragged(event -> {
+      space.setAttractor(event.getX(), event.getY());
+    });
 
   }
 
 
   public void draw() {
-//    gc.clearRect(0,0, getWidth(), getHeight());
+    gc.clearRect(0,0, getWidth(), getHeight());
     gc.setFill(Color.BLACK);
+    gc.fillOval(space.getAttractor().getX()-5, space.getAttractor().getY()-5, 20,20);
+    gc.setFill(Color.RED);
     for (Device device : space.getDevices()) {
       gc.fillOval(device.getPosition().getX(), device.getPosition().getY(), 10, 10);
     }
+
   }
 
 

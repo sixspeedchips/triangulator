@@ -40,6 +40,10 @@ public class Main extends Application {
     stage.setTitle("Triangulator");
     stage.show();
     setStageSize(stage, root);
+
+    stage.setOnCloseRequest(event -> {
+        System.exit(10);
+    });
   }
 
 
@@ -54,5 +58,6 @@ public class Main extends Application {
     stage.setMinWidth(root.minWidth(-1) + stage.getWidth() - bounds.getWidth());
     stage.setMinHeight(root.minHeight(-1) + stage.getHeight() - bounds.getHeight());
   }
+
 
 }

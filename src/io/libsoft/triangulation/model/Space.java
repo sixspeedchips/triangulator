@@ -3,17 +3,16 @@ package io.libsoft.triangulation.model;
 import io.libsoft.triangulation.model.utils.Position;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ThreadPoolExecutor;
 
 public class Space implements Runnable {
 
   List<Device> devices = new LinkedList<>();
   private boolean running;
-
+  private Position attractor;
 
   public Space() {
     devices.add(Device.create(100, 100));
-
+    attractor = Position.at(100,100);
   }
 
   public List<Device> getDevices() {
@@ -22,20 +21,12 @@ public class Space implements Runnable {
 
   @Override
   public void run() {
-    // here we will modify the position of our device, let's try a circle
-    running = true;
-    double x, y;
-    double t = 0;
-    while (running) {
-//      circle
-//      x = 100 * Math.cos(t) + 250;
-//      y = 100 * Math.sin(t) + 250;
-      x = 100*Math.cos(t) - 100*Math.cos(250/100d * t) + 250;
-      y = 100*Math.sin(t) - 100*Math.sin(250/100d * t) + 250;
 
-      Device d = devices.get(0);
-      d.setPosition(Position.of(x, y));
-      t += .001;
+    running = true;
+
+    while (running) {
+      devices.get(0).addAttractor(attractor);
+      devices.get(0).updatePosition();
 
       try {
         Thread.sleep(1);
@@ -48,5 +39,11 @@ public class Space implements Runnable {
     running = false;
   }
 
+  public Position getAttractor(){
+    return attractor;
+  }
 
+  public void setAttractor(double x, double y) {
+    this.attractor = Position.at(x, y);
+  }
 }
