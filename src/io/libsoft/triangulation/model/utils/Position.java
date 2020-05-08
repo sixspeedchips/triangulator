@@ -23,11 +23,5 @@ public class Position {
     return y;
   }
 
-  public static double slope(Position p1, Position p2){
-    double theta = 0f;
-    double slope = (p2.y - p1.y) / (p2.x - p1.x);
-    System.out.println(slope);
-    return theta;
-  }
 
 }

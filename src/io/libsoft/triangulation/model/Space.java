@@ -27,9 +27,8 @@ public class Space implements Runnable {
     while (running) {
       devices.get(0).addAttractor(attractor);
       devices.get(0).updatePosition();
-
       try {
-        Thread.sleep(1);
+        Thread.sleep(10);
       } catch (InterruptedException ignored) {}
     }
 

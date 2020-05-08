@@ -10,20 +10,26 @@ public class Vector {
     this.y = y;
   }
 
+  public static Vector from(double x, double y) {
+    return new Vector(x, y);
+  }
+
+  public static Vector fromPolar(double theta, double r) {
+    double x = r * Math.cos(theta);
+    double y = r * Math.sin(theta);
+    return new Vector(x, y);
+  }
+
+  public static Vector ZERO() {
+    return new Vector(0, 0);
+  }
+
   public double getX() {
     return x;
   }
 
   public double getY() {
     return y;
-  }
-
-  public static Vector from(double x, double y){
-    return new Vector(x, y);
-  }
-
-  public static Vector ZERO(){
-    return new Vector(0, 0);
   }
 
   @Override

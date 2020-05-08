@@ -10,14 +10,19 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Device implements Runnable {
 
-  private static final int LIMIT = 2;
+  private static final int LIMIT = 20;
   private List<Sensor> sensors = new ArrayList<>();
 
   private Position position;
   private Vector velocity;
   private ConcurrentLinkedQueue<Position> history = new ConcurrentLinkedQueue<>();
-  private Deque<Position> targetPositions = new LinkedList<>();
-  private Position prediction;
+  private Deque<Position> tPositions = new LinkedList<>();
+  private Vector prediction;
+
+
+  public Deque<Position> getTPositions() {
+    return tPositions;
+  }
 
   private Device(Position position, Vector velocity) {
     this.position = position;
@@ -40,17 +45,44 @@ public class Device implements Runnable {
 
   public void updatePosition() {
     makePrediction();
-    Position attractor = targetPositions.peekLast();
+    Position attractor = Position.at(prediction.getX(), prediction.getY());
     double xHatNew = 2e-2 * (attractor.getX() - position.getX());
     double yHatNew = 2e-2 * (attractor.getY() - position.getY());
     velocity = Vector.from(xHatNew, yHatNew);
     double newX = position.getX() + velocity.getX();
     double newY = position.getY() + velocity.getY();
+    System.out.println(position);
     position = Position.at(newX, newY);
   }
 
   private void makePrediction() {
-    Position.slope(targetPositions.getFirst(), targetPositions.getLast());
+    double sumX = 0.0;
+    double sumX2 = 0.0;
+    double sumY = 0.0;
+    for (Position position : tPositions) {
+      sumX += position.getX();
+      sumX2 += position.getX() * position.getX();
+      sumY += position.getY();
+    }
+    double xBar = sumX / tPositions.size();
+    double yBar = sumY / tPositions.size();
+
+    double XXbar = 0.0;
+    double YYbar = 0.0;
+    double XYbar = 0.0;
+
+    for (Position position : tPositions) {
+      XXbar += Math.pow(position.getX() - xBar, 2);
+      YYbar += Math.pow(position.getY() - yBar, 2);
+      XYbar += (position.getX() - xBar) * (position.getY() - yBar);
+    }
+
+    double theta = -Math.atan2(XYbar / XXbar * Math.signum(tPositions.peekLast().getX() - tPositions.peekFirst().getX())
+        , Math.signum(tPositions.peekFirst().getX() - tPositions.peekLast().getX()));
+    double r = Math.sqrt(Math.pow(tPositions.peekFirst().getX() - tPositions.peekLast().getX(), 2)
+        + Math.pow(tPositions.peekFirst().getY() - tPositions.peekLast().getY(),2));
+    double speed = r / 1000 * tPositions.size();
+    prediction = Vector.fromPolar(theta, r);
   }
 
   @Override
@@ -58,8 +90,8 @@ public class Device implements Runnable {
 
   }
 
-  public Position getPosition() {
-    return position;
+  public Vector getPrediction() {
+    return prediction;
   }
 
   public void setPosition(Position position) {
@@ -71,16 +103,16 @@ public class Device implements Runnable {
   }
 
   public void addAttractor(Position attractor) {
-    targetPositions.offerLast(attractor);
-    if (targetPositions.size() > LIMIT) {
-      targetPositions.pollFirst();
+    tPositions.push(attractor);
+    if (tPositions.size() > LIMIT) {
+      tPositions.removeLast();
     }
   }
 
 
 
 
-  private double distance(Position other) {
-    return Math.sqrt(Math.pow((other.getX() - position.getX()), 2) + Math.pow((other.getY() - position.getY()), 2));
+  public Position getPosition() {
+    return position;
   }
 }
