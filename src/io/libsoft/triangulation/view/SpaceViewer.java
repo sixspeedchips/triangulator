@@ -1,7 +1,7 @@
 package io.libsoft.triangulation.view;
 
-import io.libsoft.triangulation.model.Device;
 import io.libsoft.triangulation.model.Space;
+import io.libsoft.triangulation.model.predictors.Prediction;
 import io.libsoft.triangulation.model.utils.Vector;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -19,11 +19,11 @@ public class SpaceViewer extends Canvas {
     setWidth(1000);
     setHeight(1000);
     setOnMouseDragged(event -> {
-      space.setAttractor(event.getX(), -event.getY());
-//      System.out.println(-event.getY());
+      space.setTarget(event.getX(), -event.getY());
     });
+
     setOnMouseClicked(event -> {
-//      System.out.println(event.getY());
+      space.setTarget(event.getX(), -event.getY());
     });
   }
 
@@ -32,26 +32,42 @@ public class SpaceViewer extends Canvas {
     gc.setFill(Color.GHOSTWHITE);
     gc.fillRect(0, 0, getWidth(), getHeight());
     gc.setLineCap(StrokeLineCap.ROUND);
-    Device device = space.getDevices().get(0);
-    double x = device.getPosition().getX();
-    double y = -device.getPosition().getY();
+    Prediction predictor = space.getPredictors().get(0);
+    double x = predictor.getCurrentPosition().getX();
+    double y = -predictor.getCurrentPosition().getY();
 
-    double xa = space.getAttractor().getX();
-    double ya = -space.getAttractor().getY();
+    double xa = space.getTarget().getX();
+    double ya = -space.getTarget().getY();
 
     gc.setFill(Color.RED);
-    gc.fillOval(x-5, y-5 , 10, 10);
-    Vector slope = space.getDevices().get(0).getPrediction();
-    gc.setLineWidth(3);
+    gc.fillOval(x - 5, y - 5, 10, 10);
+    Vector prediction = space.getPredictors().get(0).getPredictionVector();
+    gc.setLineWidth(2);
     gc.setStroke(Color.BLACK);
-    gc.strokeLine(0, 0, x, y);
-    if (!Double.isNaN(slope.getX())) {
-      gc.setStroke(Color.BLUE);
-      gc.strokeLine(0,0, xa + slope.getX(), ya - slope.getY());
-      gc.strokeLine(x,y, xa + slope.getX(), ya - slope.getY());
-    }
+//    double[] xArr = predictor.getTargetPositions().stream().map(Position::getX).mapToDouble(Double::doubleValue).toArray();
+//    double[] yArr = predictor.getTargetPositions().stream().map(position -> -position.getY()).mapToDouble(Double::doubleValue)
+//        .toArray();
+//    gc.strokePolyline(xArr, yArr, xArr.length);
+
+//    double[] xArrD = device.getHistory().stream().map(Position::getX).mapToDouble(Double::doubleValue).toArray();
+//    double[] yArrD = device.getHistory().stream().map(position -> -position.getY()).mapToDouble(Double::doubleValue)
+//        .toArray();
+//    gc.strokePolyline(xArrD, yArrD, xArrD.length);
+
+//    double[] xArA = space.getAttractorHistory().stream().map(Position::getX).mapToDouble(Double::doubleValue).toArray();
+//    double[] yArrA = space.getAttractorHistory().stream().map(position -> -position.getY()).mapToDouble(Double::doubleValue)
+//        .toArray();
+//    gc.strokePolyline(xArA, yArrA, xArA.length);
+//
+//
     gc.setFill(Color.GREEN);
-    gc.fillOval(xa-4, ya-4, 8,8);
+
+    gc.fillOval(xa - 4, ya - 4, 8, 8);
+    if (prediction != null) {
+      gc.setStroke(Color.BLUE);
+//      gc.strokeLine(0,0, xa + slope.getX(), ya - slope.getY());
+      gc.strokeLine(xa, ya, xa + prediction.getX(), ya - prediction.getY());
+    }
   }
 
 

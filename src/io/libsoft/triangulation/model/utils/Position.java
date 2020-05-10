@@ -15,6 +15,10 @@ public class Position {
     return new Position(x,y);
   }
 
+  public static Position ZERO() {
+    return Position.at(0,0);
+  }
+
   public double getX() {
     return x;
   }
@@ -23,5 +27,11 @@ public class Position {
     return y;
   }
 
-
+  @Override
+  public String toString() {
+    return "Position{" +
+        "x=" + x +
+        ", y=" + y +
+        '}';
+  }
 }
