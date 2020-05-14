@@ -7,18 +7,20 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Space implements Runnable {
+public class Model implements Runnable {
 
-  private double SAMPLE_RATE = 100; // samples/sec
+  private double SAMPLE_RATE = 100;
   private long SLEEP = (long) (1000 / SAMPLE_RATE);
   private boolean running = true;
-  private Position target;
+  private Position target = Position.ZERO();
+  private List<Element> elements = new LinkedList<>();
   private List<Prediction> predictions = new LinkedList<>();
-  private Deque<Position> attractorHistory = new LinkedList<>();
+  private Deque<Position> targetHistory = new LinkedList<>();
 
-  public Space() {
-    predictions.add(PredictorFactory.linearPredictor().withSamples(20).withSampleRate(SAMPLE_RATE).create());
-    target = Position.at(0,0);
+  public Model() {
+    Prediction linearPredictor = PredictorFactory.linearPredictor().withSamples(20).withSampleRate(SAMPLE_RATE).create();
+    predictions.add(linearPredictor);
+    elements.add(linearPredictor);
   }
 
   public List<Prediction> getPredictors() {
@@ -28,7 +30,9 @@ public class Space implements Runnable {
   @Override
   public void run() {
     while (running) {
-      predictions.get(0).setTarget(target);
+      for (Element element : elements) {
+        element.update();
+      }
       try {
         Thread.sleep(SLEEP);
       } catch (InterruptedException ignored) {}
@@ -46,13 +50,13 @@ public class Space implements Runnable {
 
   public void setTarget(double x, double y) {
     this.target = Position.at(x, y);
-    attractorHistory.addFirst(this.target);
-    if (attractorHistory.size() > 200){
-      attractorHistory.removeLast();
+    targetHistory.addFirst(this.target);
+    if (targetHistory.size() > 200){
+      targetHistory.removeLast();
     }
   }
 
-  public Deque<Position> getAttractorHistory() {
-    return attractorHistory;
+  public Deque<Position> getTargetHistory() {
+    return targetHistory;
   }
 }

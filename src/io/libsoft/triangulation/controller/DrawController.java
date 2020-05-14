@@ -1,7 +1,7 @@
 package io.libsoft.triangulation.controller;
 
 
-import io.libsoft.triangulation.model.Space;
+import io.libsoft.triangulation.model.Model;
 import io.libsoft.triangulation.view.SpaceViewer;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
@@ -17,11 +17,11 @@ public class DrawController {
 
   private boolean running;
   private GFXUpdater updater;
-  private Space space;
+  private Model space;
 
   @FXML
   private void initialize() {
-    space = new Space();
+    space = new Model();
     new Thread(space).start();
     spaceViewer.setSpace(space);
     updater = new GFXUpdater();

@@ -11,7 +11,9 @@ public class LinearPredictor implements Prediction {
   private double sampleRate;
   private Position position = Position.ZERO();
   private Vector velocity = Vector.ZERO();
+  private Position target = Position.ZERO();
   private double ALPHA = 1;
+
 
   private Deque<Position> history = new LinkedList<>();
   private Deque<Position> targetPositions = new LinkedList<>();
@@ -22,10 +24,9 @@ public class LinearPredictor implements Prediction {
     sampleRate = builder.sampleRate;
   }
 
+  @Override
+  public void update() {
 
-  public void updatePosition() {
-
-    Position target;
     if (prediction != null) {
       target = Position.at(prediction.getX() + targetPositions.peekFirst().getX(),
           prediction.getY() + targetPositions.peekFirst().getY());
@@ -70,15 +71,14 @@ public class LinearPredictor implements Prediction {
 
     double r = Math.sqrt(Math.pow(targetPositions.peekFirst().getX() - targetPositions.peekLast().getX(), 2) +
         Math.pow(targetPositions.peekFirst().getY() - targetPositions.peekLast().getY(), 2));
-
-    r /= targetPositions.size();
+    r /= 5;
+//    r = targetPositions.size();
 //    r = sampleRate;
-    System.out.println(r);
+//    System.out.println(r);
     if (Double.isNaN(theta)) {
       prediction = null;
     } else {
       prediction = Vector.fromPolar(theta, r);
-
     }
   }
 
@@ -92,13 +92,13 @@ public class LinearPredictor implements Prediction {
       history.remove();
     }
     makePrediction();
-    updatePosition();
   }
 
   @Override
   public Vector getPredictionVector() {
     return prediction;
   }
+
 
   public Deque<Position> getTargetPositions() {
     return targetPositions;
@@ -111,6 +111,7 @@ public class LinearPredictor implements Prediction {
   public Position getCurrentPosition() {
     return position;
   }
+
 
   public static class Builder {
 

@@ -1,6 +1,6 @@
 package io.libsoft.triangulation.view;
 
-import io.libsoft.triangulation.model.Space;
+import io.libsoft.triangulation.model.Model;
 import io.libsoft.triangulation.model.predictors.Prediction;
 import io.libsoft.triangulation.model.utils.Vector;
 import javafx.scene.canvas.Canvas;
@@ -10,11 +10,11 @@ import javafx.scene.shape.StrokeLineCap;
 
 public class SpaceViewer extends Canvas {
 
-  private Space space;
+  private Model space;
   private GraphicsContext gc;
 
   public SpaceViewer() {
-    space = new Space();
+    space = new Model();
     gc = getGraphicsContext2D();
     setWidth(1000);
     setHeight(1000);
@@ -71,7 +71,7 @@ public class SpaceViewer extends Canvas {
   }
 
 
-  public void setSpace(Space space) {
+  public void setSpace(Model space) {
     this.space = space;
   }
 }
