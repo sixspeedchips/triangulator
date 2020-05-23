@@ -21,6 +21,7 @@ public class Model implements Runnable {
     Prediction linearPredictor = PredictorFactory.linearPredictor().withSamples(20).withSampleRate(SAMPLE_RATE).create();
     predictions.add(linearPredictor);
     elements.add(linearPredictor);
+
   }
 
   public List<Prediction> getPredictors() {
