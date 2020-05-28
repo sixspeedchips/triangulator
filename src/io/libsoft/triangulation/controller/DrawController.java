@@ -23,7 +23,7 @@ public class DrawController {
   private void initialize() {
     space = new Model();
     new Thread(space).start();
-    spaceViewer.setSpace(space);
+    spaceViewer.setModel(space);
     updater = new GFXUpdater();
     updater.start();
 

@@ -20,6 +20,7 @@ public class LinearPredictor implements Prediction {
   private Vector prediction;
 
   private LinearPredictor(Builder builder) {
+    targetPositions.add(target);
     samples = builder.samples;
     sampleRate = builder.sampleRate;
   }

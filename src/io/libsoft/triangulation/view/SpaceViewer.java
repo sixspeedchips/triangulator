@@ -10,20 +10,20 @@ import javafx.scene.shape.StrokeLineCap;
 
 public class SpaceViewer extends Canvas {
 
-  private Model space;
+  private Model model;
   private GraphicsContext gc;
 
   public SpaceViewer() {
-    space = new Model();
+    model = new Model();
     gc = getGraphicsContext2D();
-    setWidth(1000);
-    setHeight(1000);
+    setWidth(600);
+    setHeight(500);
     setOnMouseDragged(event -> {
-      space.setTarget(event.getX(), -event.getY());
+      model.setTarget(event.getX(), -event.getY());
     });
 
     setOnMouseClicked(event -> {
-      space.setTarget(event.getX(), -event.getY());
+      model.setTarget(event.getX(), -event.getY());
     });
   }
 
@@ -32,16 +32,16 @@ public class SpaceViewer extends Canvas {
     gc.setFill(Color.GHOSTWHITE);
     gc.fillRect(0, 0, getWidth(), getHeight());
     gc.setLineCap(StrokeLineCap.ROUND);
-    Prediction predictor = space.getPredictors().get(0);
+    Prediction predictor = model.getPredictors().get(0);
     double x = predictor.getCurrentPosition().getX();
     double y = -predictor.getCurrentPosition().getY();
-
-    double xa = space.getTarget().getX();
-    double ya = -space.getTarget().getY();
+//
+    double xa = model.getTarget().getX();
+    double ya = -model.getTarget().getY();
 
     gc.setFill(Color.RED);
     gc.fillOval(x - 5, y - 5, 10, 10);
-    Vector prediction = space.getPredictors().get(0).getPredictionVector();
+    Vector prediction = model.getPredictors().get(0).getPredictionVector();
     gc.setLineWidth(2);
     gc.setStroke(Color.BLACK);
 //    double[] xArr = predictor.getTargetPositions().stream().map(Position::getX).mapToDouble(Double::doubleValue).toArray();
@@ -71,7 +71,7 @@ public class SpaceViewer extends Canvas {
   }
 
 
-  public void setSpace(Model space) {
-    this.space = space;
+  public void setModel(Model model) {
+    this.model = model;
   }
 }
