@@ -1,19 +1,20 @@
 package io.libsoft.triangulation.view;
 
 import io.libsoft.triangulation.model.Model;
-import io.libsoft.triangulation.model.predictors.Prediction;
+import io.libsoft.triangulation.model.predictors.Predictor;
+import io.libsoft.triangulation.model.utils.Position;
 import io.libsoft.triangulation.model.utils.Vector;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
 
-public class SpaceViewer extends Canvas {
+public class ModelViewer extends Canvas {
 
   private Model model;
   private GraphicsContext gc;
 
-  public SpaceViewer() {
+  public ModelViewer() {
     model = new Model();
     gc = getGraphicsContext2D();
     setWidth(600);
@@ -22,9 +23,9 @@ public class SpaceViewer extends Canvas {
       model.setTarget(event.getX(), -event.getY());
     });
 
-    setOnMouseClicked(event -> {
-      model.setTarget(event.getX(), -event.getY());
-    });
+//    setOnMouseClicked(event -> {
+//      model.setTarget(event.getX(), -event.getY());
+//    });
   }
 
 
@@ -32,7 +33,7 @@ public class SpaceViewer extends Canvas {
     gc.setFill(Color.GHOSTWHITE);
     gc.fillRect(0, 0, getWidth(), getHeight());
     gc.setLineCap(StrokeLineCap.ROUND);
-    Prediction predictor = model.getPredictors().get(0);
+    Predictor predictor = model.getPredictors().get(0);
     double x = predictor.getCurrentPosition().getX();
     double y = -predictor.getCurrentPosition().getY();
 //
@@ -48,17 +49,17 @@ public class SpaceViewer extends Canvas {
 //    double[] yArr = predictor.getTargetPositions().stream().map(position -> -position.getY()).mapToDouble(Double::doubleValue)
 //        .toArray();
 //    gc.strokePolyline(xArr, yArr, xArr.length);
-
-//    double[] xArrD = device.getHistory().stream().map(Position::getX).mapToDouble(Double::doubleValue).toArray();
-//    double[] yArrD = device.getHistory().stream().map(position -> -position.getY()).mapToDouble(Double::doubleValue)
+//
+//    double[] xArrD = predictor.getHistory().stream().map(Position::getX).mapToDouble(Double::doubleValue).toArray();
+//    double[] yArrD = predictor.getHistory().stream().map(position -> -position.getY()).mapToDouble(Double::doubleValue)
 //        .toArray();
 //    gc.strokePolyline(xArrD, yArrD, xArrD.length);
 
-//    double[] xArA = space.getAttractorHistory().stream().map(Position::getX).mapToDouble(Double::doubleValue).toArray();
-//    double[] yArrA = space.getAttractorHistory().stream().map(position -> -position.getY()).mapToDouble(Double::doubleValue)
+//    double[] xArA = model.getTargetHistory().stream().map(Position::getX).mapToDouble(Double::doubleValue).toArray();
+//    double[] yArrA = model.getTargetHistory().stream().map(position -> -position.getY()).mapToDouble(Double::doubleValue)
 //        .toArray();
 //    gc.strokePolyline(xArA, yArrA, xArA.length);
-//
+
 //
     gc.setFill(Color.GREEN);
 

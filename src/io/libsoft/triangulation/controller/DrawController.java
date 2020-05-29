@@ -2,7 +2,7 @@ package io.libsoft.triangulation.controller;
 
 
 import io.libsoft.triangulation.model.Model;
-import io.libsoft.triangulation.view.SpaceViewer;
+import io.libsoft.triangulation.view.ModelViewer;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.text.Text;
@@ -10,20 +10,20 @@ import javafx.scene.text.Text;
 public class DrawController {
 
   @FXML
-  public SpaceViewer spaceViewer;
+  public ModelViewer modelViewer;
 
   @FXML
   public Text text;
 
   private boolean running;
   private GFXUpdater updater;
-  private Model space;
+  private Model model;
 
   @FXML
   private void initialize() {
-    space = new Model();
-    new Thread(space).start();
-    spaceViewer.setModel(space);
+    model = new Model();
+    new Thread(model).start();
+    modelViewer.setModel(model);
     updater = new GFXUpdater();
     updater.start();
 
@@ -39,7 +39,7 @@ public class DrawController {
   }
 
   private void updateView() {
-    spaceViewer.draw();
+    modelViewer.draw();
   }
 
 

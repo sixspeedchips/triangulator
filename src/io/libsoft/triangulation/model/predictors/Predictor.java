@@ -4,8 +4,12 @@ import io.libsoft.triangulation.model.Element;
 import io.libsoft.triangulation.model.utils.Position;
 import io.libsoft.triangulation.model.utils.Vector;
 
-public interface Prediction extends Element {
+public interface Predictor extends Element, Runnable{
+
   void setTarget(Position position);
+
   Position getCurrentPosition();
+
   Vector getPredictionVector();
+
 }

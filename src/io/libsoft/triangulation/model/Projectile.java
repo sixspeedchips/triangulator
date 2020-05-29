@@ -9,20 +9,20 @@ import java.util.Map;
 public class Projectile implements Element {
 
   private Position position;
-  private Vector velocity = Vector.ZERO();
+  private Vector velocity;
 
   public Projectile(Vector velocity) {
+    this.position = Position.ZERO();
     this.velocity = velocity;
   }
 
   public Projectile() {
+    this.position = Position.ZERO();
+    this.velocity = Vector.ZERO();
   }
 
   @Override
   public void update() {
-//    double nextX =
-//    this.position =
-
 
   }
 }

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<?import io.libsoft.triangulation.view.SpaceViewer?>
+<?import io.libsoft.triangulation.view.ModelViewer?>
 <?import javafx.scene.layout.VBox?>
 <VBox xmlns:fx="http://javafx.com/fxml"
   fx:controller="io.libsoft.triangulation.controller.DrawController">
   <!--  <Text-->
   <!--    fx:id="text"/>-->
-  <SpaceViewer fx:id="spaceViewer"/>
+  <ModelViewer fx:id="modelViewer"/>
 
 </VBox>

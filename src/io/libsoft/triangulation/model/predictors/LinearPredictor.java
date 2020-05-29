@@ -1,49 +1,44 @@
 package io.libsoft.triangulation.model.predictors;
 
+import io.libsoft.triangulation.model.Sensor;
 import io.libsoft.triangulation.model.utils.Position;
 import io.libsoft.triangulation.model.utils.Vector;
 import java.util.Deque;
 import java.util.LinkedList;
 
-public class LinearPredictor implements Prediction {
-
-  private int samples;
-  private double sampleRate;
-  private Position position = Position.ZERO();
-  private Vector velocity = Vector.ZERO();
-  private Position target = Position.ZERO();
-  private double ALPHA = 1;
+public class LinearPredictor implements Predictor {
 
 
-  private Deque<Position> history = new LinkedList<>();
-  private Deque<Position> targetPositions = new LinkedList<>();
+  private final double ALPHA = 1e-1;
+
+  private Position position;
+  private Vector velocity;
+  private Position target;
+
+
+  private Deque<Position> history;
+  private Deque<Position> targetPositions;
   private Vector prediction;
+  private Sensor sensor;
+  private boolean running;
 
-  private LinearPredictor(Builder builder) {
-    targetPositions.add(target);
-    samples = builder.samples;
-    sampleRate = builder.sampleRate;
+  public LinearPredictor(Sensor sensor) {
+    this.sensor = sensor;
+    history = new LinkedList<>();
+    targetPositions = new LinkedList<>();
+    position = Position.ZERO();
+    velocity = Vector.ZERO();
+    target = Position.ZERO();
+
   }
+
 
   @Override
   public void update() {
 
-    if (prediction != null) {
-      target = Position.at(prediction.getX() + targetPositions.peekFirst().getX(),
-          prediction.getY() + targetPositions.peekFirst().getY());
-    } else {
-      target = targetPositions.peekFirst();
-    }
-    double xHatNew = ALPHA * (target.getX() - position.getX());
-    double yHatNew = ALPHA * (target.getY() - position.getY());
-    velocity = Vector.from(xHatNew, yHatNew);
-    double newX = position.getX() + velocity.getX();
-    double newY = position.getY() + velocity.getY();
-    position = Position.at(newX, newY);
   }
 
   private void makePrediction() {
-
     double sumX = 0.0;
     double sumX2 = 0.0;
     double sumY = 0.0;
@@ -72,10 +67,7 @@ public class LinearPredictor implements Prediction {
 
     double r = Math.sqrt(Math.pow(targetPositions.peekFirst().getX() - targetPositions.peekLast().getX(), 2) +
         Math.pow(targetPositions.peekFirst().getY() - targetPositions.peekLast().getY(), 2));
-    r /= 5;
-//    r = targetPositions.size();
-//    r = sampleRate;
-//    System.out.println(r);
+
     if (Double.isNaN(theta)) {
       prediction = null;
     } else {
@@ -85,14 +77,13 @@ public class LinearPredictor implements Prediction {
 
   public void setTarget(Position target) {
     targetPositions.push(target);
-    if (targetPositions.size() > samples) {
+    if (targetPositions.size() > 200) {
       targetPositions.removeLast();
     }
     history.add(position);
     if (history.size() > 200) {
-      history.remove();
+      history.removeLast();
     }
-    makePrediction();
   }
 
   @Override
@@ -100,37 +91,39 @@ public class LinearPredictor implements Prediction {
     return prediction;
   }
 
-
-  public Deque<Position> getTargetPositions() {
-    return targetPositions;
-  }
-
-  public Vector getPrediction() {
-    return prediction;
-  }
-
   public Position getCurrentPosition() {
     return position;
   }
 
+  @Override
+  public void run() {
+    running = true;
+    while(running){
+      setTarget(sensor.getTarget());
+      makePrediction();
+      // if the prediction is null, which happens in cases where the last n points
+      // are all the same use the last known position as the target
+      if (prediction != null) {
+        target = Position.at(prediction.getX() + targetPositions.peekFirst().getX(),
+            prediction.getY() + targetPositions.peekFirst().getY());
+      } else {
+        target = targetPositions.peekFirst();
+      }
+      double xHatNew = ALPHA * (target.getX() - position.getX());
+      double yHatNew = ALPHA * (target.getY() - position.getY());
+      velocity = Vector.from(xHatNew, yHatNew);
+      double newX = position.getX() + velocity.getX();
+      double newY = position.getY() + velocity.getY();
 
-  public static class Builder {
+      position = Position.at(newX, newY);
 
-    private int samples = 2;
-    private double sampleRate = 1;
-
-    public Builder withSamples(int val) {
-      samples = val;
-      return this;
+      try {
+        Thread.sleep(2);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
     }
 
-    public LinearPredictor create() {
-      return new LinearPredictor(this);
-    }
-
-    public Builder withSampleRate(double sampleRate) {
-      this.sampleRate = sampleRate;
-      return this;
-    }
   }
+
 }
