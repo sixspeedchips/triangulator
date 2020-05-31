@@ -11,6 +11,6 @@ public class Sensor {
   }
 
   public Position getTarget(){
-    return model.getTarget();
+    return model.getEntityPosition();
   }
 }

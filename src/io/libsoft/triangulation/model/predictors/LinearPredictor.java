@@ -3,19 +3,19 @@ package io.libsoft.triangulation.model.predictors;
 import io.libsoft.triangulation.model.Sensor;
 import io.libsoft.triangulation.model.utils.Position;
 import io.libsoft.triangulation.model.utils.Vector;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
 
 public class LinearPredictor implements Predictor {
 
 
-  private final double ALPHA = 1e-1;
+  private final double ALPHA = 1;
 
   private Position position;
   private Vector velocity;
   private Position target;
-
-
   private Deque<Position> history;
   private Deque<Position> targetPositions;
   private Vector prediction;
@@ -32,6 +32,9 @@ public class LinearPredictor implements Predictor {
 
   }
 
+  public List<Position> getHistory() {
+    return new ArrayList<>(history);
+  }
 
   @Override
   public void update() {
@@ -64,10 +67,16 @@ public class LinearPredictor implements Predictor {
     double theta = -Math.atan2(slope *
             Math.signum(targetPositions.peekLast().getX() - targetPositions.peekFirst().getX()),
         Math.signum(targetPositions.peekFirst().getX() - targetPositions.peekLast().getX()));
+    Position end = targetPositions.peekFirst();
+    Position start = targetPositions.peekLast();
 
-    double r = Math.sqrt(Math.pow(targetPositions.peekFirst().getX() - targetPositions.peekLast().getX(), 2) +
-        Math.pow(targetPositions.peekFirst().getY() - targetPositions.peekLast().getY(), 2));
+    double r = Math.sqrt(Math.pow(end.getX() - start.getX(), 2) +
+        Math.pow(end.getY() - start.getY(), 2));
+    double delta = end.getTimeStamp() - start.getTimeStamp();
+    r *= delta;
 
+
+//    System.out.println(delta);
     if (Double.isNaN(theta)) {
       prediction = null;
     } else {
@@ -77,11 +86,11 @@ public class LinearPredictor implements Predictor {
 
   public void setTarget(Position target) {
     targetPositions.push(target);
-    if (targetPositions.size() > 200) {
+    history.add(position);
+    if (targetPositions.size() > 3) {
       targetPositions.removeLast();
     }
-    history.add(position);
-    if (history.size() > 200) {
+    if (history.size() > 40) {
       history.removeLast();
     }
   }
@@ -98,7 +107,7 @@ public class LinearPredictor implements Predictor {
   @Override
   public void run() {
     running = true;
-    while(running){
+    while (running) {
       setTarget(sensor.getTarget());
       makePrediction();
       // if the prediction is null, which happens in cases where the last n points
@@ -118,7 +127,7 @@ public class LinearPredictor implements Predictor {
       position = Position.at(newX, newY);
 
       try {
-        Thread.sleep(2);
+        Thread.sleep(200);
       } catch (InterruptedException e) {
         e.printStackTrace();
       }

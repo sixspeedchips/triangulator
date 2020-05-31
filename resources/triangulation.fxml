@@ -2,10 +2,26 @@
 
 <?import io.libsoft.triangulation.view.ModelViewer?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
 <VBox xmlns:fx="http://javafx.com/fxml"
   fx:controller="io.libsoft.triangulation.controller.DrawController">
   <!--  <Text-->
   <!--    fx:id="text"/>-->
+  <HBox>
+    <Button fx:id="run"
+      text="Start"
+      onAction="#start"
+    />
+    <Button fx:id="stop"
+      text="Stop"
+      onAction="#stop"
+    />
+
+
+  </HBox>
+
   <ModelViewer fx:id="modelViewer"/>
 
 </VBox>

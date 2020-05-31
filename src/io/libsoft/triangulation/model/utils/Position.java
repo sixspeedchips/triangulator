@@ -4,11 +4,12 @@ public class Position {
 
   private double x;
   private double y;
-
+  private double timeStamp;
 
   private Position(double x, double y) {
     this.x = x;
     this.y = y;
+    this.timeStamp = System.nanoTime() / 1e9;
   }
 
   public static Position at(double x, double y){
@@ -34,4 +35,9 @@ public class Position {
         ", y=" + y +
         '}';
   }
+
+  public double getTimeStamp() {
+    return timeStamp;
+  }
+
 }

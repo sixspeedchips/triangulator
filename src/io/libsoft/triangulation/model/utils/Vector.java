@@ -23,6 +23,13 @@ public class Vector {
   public static Vector ZERO() {
     return new Vector(0, 0);
   }
+  public double getTheta(){
+    return Math.atan2(y,x);
+  }
+
+  public Vector add(Vector other){
+    return Vector.from(this.x + other.x, this.y + other.y);
+  }
 
   public double getX() {
     return x;
